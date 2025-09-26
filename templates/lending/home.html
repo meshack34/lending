@@ -1,0 +1,150 @@
+{% extends "main.html" %}
+{% block content %}
+
+<!-- Hero -->
+<section id="home" class="hero-section text-center">
+  <div class="container">
+    <h1 class="fw-bold text-white">Automate Your Lending Business</h1>
+    <p class="lead text-light">Focus on growth while we handle the financial administration and loan tracking.</p>
+    <a href="{% url 'register' %}" class="btn btn-light btn-lg mt-3">Get Started</a>
+    <a href="#demo" class="btn btn-outline-light btn-lg mt-3">Try Demo</a>
+  </div>
+</section>
+
+<!-- Solutions -->
+<section id="solutions" class="py-5 text-center">
+  <div class="container">
+    <h2 class="fw-bold mb-4">Our Solutions</h2>
+    <p class="mb-5">LendingSys simplifies loan management, repayment tracking, and financial reporting.</p>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100 p-4">
+          <i class="bi bi-gear fs-2 text-primary mb-3"></i>
+          <h5 class="fw-bold">Easy Setup</h5>
+          <p>Just a few steps and your lending platform is ready to use.</p>
+          <a href="#" class="text-decoration-none">Read More →</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100 p-4">
+          <i class="bi bi-shield-lock fs-2 text-success mb-3"></i>
+          <h5 class="fw-bold">Secure & Reliable</h5>
+          <p>All transactions and data are encrypted for maximum security.</p>
+          <a href="#" class="text-decoration-none">Read More →</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100 p-4">
+          <i class="bi bi-headset fs-2 text-warning mb-3"></i>
+          <h5 class="fw-bold">24/7 Support</h5>
+          <p>Our dedicated team is always available to assist you.</p>
+          <a href="#" class="text-decoration-none">Read More →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="bg-light py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">Key Features</h2>
+    <p class="mb-5">All the tools you need to run a successful lending business.</p>
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div class="card h-100 p-4 shadow-sm">
+          <i class="bi bi-phone fs-2 text-primary"></i>
+          <h6 class="fw-bold mt-2">Mobile Access</h6>
+          <p class="small">Track loans and repayments from any device.</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100 p-4 shadow-sm">
+          <i class="bi bi-cloud fs-2 text-info"></i>
+          <h6 class="fw-bold mt-2">Cloud Ready</h6>
+          <p class="small">Access your data anytime, anywhere securely.</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100 p-4 shadow-sm">
+          <i class="bi bi-bar-chart fs-2 text-success"></i>
+          <h6 class="fw-bold mt-2">Analytics</h6>
+          <p class="small">Get insights into repayments, defaults, and growth.</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100 p-4 shadow-sm">
+          <i class="bi bi-bank fs-2 text-warning"></i>
+          <h6 class="fw-bold mt-2">Integration</h6>
+          <p class="small">Works with banking and payment APIs seamlessly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing" class="py-5 text-center">
+  <div class="container">
+    <h2 class="fw-bold mb-4">Pricing Plans</h2>
+    <p class="mb-5">Choose a plan that fits your business needs.</p>
+
+    <div class="row justify-content-center g-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm p-4 h-100">
+          <h5 class="fw-bold">Free Trial</h5>
+          <p class="price h3">$0 <span class="fs-6">/ month</span></p>
+          <ul class="list-unstyled small">
+            <li>✔ Access to core features</li>
+            <li>✔ Manage up to 10 clients</li>
+            <li>✔ Basic support</li>
+            <li>✔ 14-day trial</li>
+          </ul>
+          <a href="{% url 'register' %}" class="btn btn-outline-primary">Start Free</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm p-4 h-100 border-primary border-2">
+          <h5 class="fw-bold">Premium</h5>
+          <p class="price h3">$49 <span class="fs-6">/ month</span></p>
+          <ul class="list-unstyled small">
+            <li>✔ Unlimited clients</li>
+            <li>✔ Advanced analytics</li>
+            <li>✔ Dedicated support</li>
+            <li>✔ Full integrations</li>
+          </ul>
+          <a href="{% url 'register' %}" class="btn btn-primary">Go Premium</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about" class="bg-light py-5 text-center">
+  <div class="container">
+    <h2 class="fw-bold mb-4">About Us</h2>
+    <p class="lead">We provide modern lending management solutions that help financial businesses scale efficiently, securely, and transparently.</p>
+  </div>
+</section>
+
+<!-- Partners -->
+<section id="partners" class="py-5 text-center">
+  <div class="container">
+    <h2 class="fw-bold mb-4">Our Partners</h2>
+    <p class="mb-4">Trusted by organizations and innovators across industries.</p>
+    <a href="#" class="btn btn-outline-primary">Become a Partner</a>
+  </div>
+</section>
+
+<!-- Blog -->
+<section id="blog" class="bg-light py-5 text-center">
+  <div class="container">
+    <h2 class="fw-bold mb-4">Latest Insights</h2>
+    <p class="mb-4">Stay updated with our lending management tips and news.</p>
+    <a href="#" class="btn btn-primary">Visit Blog</a>
+  </div>
+</section>
+
+{% endblock %}
