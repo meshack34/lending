@@ -4,19 +4,45 @@ from django.utils import timezone
 
 
 # -------------------------------
-# 1. Custom User with Roles
+# 1. Company & Offices
+# -------------------------------
+class Company(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+    registration_number = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+
+class Office(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="offices")
+    name = models.CharField(max_length=200)
+    location = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.company.name})"
+
+
+# -------------------------------
+# 2. Custom User with Roles
 # -------------------------------
 class User(AbstractUser):
     ROLE_CHOICES = [
-        ("ADMIN", "Admin"),
+        ("ADMIN", "Admin"),         # System-wide superuser
+        ("MANAGER", "Manager"),     # Manages officers within an office
         ("OFFICER", "Loan Officer"),
         ("MEMBER", "Member"),
     ]
 
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="MEMBER")
+    office = models.ForeignKey(Office, on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
 
     def is_admin(self):
         return self.role == "ADMIN"
+
+    def is_manager(self):
+        return self.role == "MANAGER"
 
     def is_officer(self):
         return self.role == "OFFICER"
@@ -25,11 +51,27 @@ class User(AbstractUser):
         return self.role == "MEMBER"
 
     def __str__(self):
-        return f"{self.username} ({self.role})"
+        office_name = self.office.name if self.office else "No Office"
+        return f"{self.username} ({self.role}) - {office_name}"
 
 
 # -------------------------------
-# 2. Member Profile
+# 3. Manager ↔ Officers Relationship
+# -------------------------------
+class ManagerOfficerAssignment(models.Model):
+    manager = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={"role": "MANAGER"}, related_name="assigned_officers")
+    officer = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={"role": "OFFICER"}, related_name="assigned_manager")
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ("manager", "officer")  # prevent duplicates
+
+    def __str__(self):
+        return f"{self.officer.username} -> {self.manager.username}"
+
+
+# -------------------------------
+# 4. Member Profile
 # -------------------------------
 class MemberProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
@@ -44,9 +86,10 @@ class MemberProfile(models.Model):
 
 
 # -------------------------------
-# 3. Loan Policies (Admin-defined)
+# 5. Loan Policies (Admin-defined)
 # -------------------------------
 class LoanPolicy(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="loan_policies")
     name = models.CharField(max_length=100)
     interest_rate = models.DecimalField(max_digits=5, decimal_places=2)  # flat rate (% per year)
     min_amount = models.DecimalField(max_digits=12, decimal_places=2)
@@ -54,11 +97,11 @@ class LoanPolicy(models.Model):
     max_term_months = models.PositiveIntegerField()
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.company.name})"
 
 
 # -------------------------------
-# 4. Loans
+# 6. Loans
 # -------------------------------
 class Loan(models.Model):
     STATUS_CHOICES = [
@@ -70,6 +113,7 @@ class Loan(models.Model):
     ]
 
     member = models.ForeignKey(MemberProfile, on_delete=models.CASCADE, related_name="loans")
+    officer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, limit_choices_to={"role": "OFFICER"})
     policy = models.ForeignKey(LoanPolicy, on_delete=models.SET_NULL, null=True, blank=True)
     principal_amount = models.DecimalField(max_digits=12, decimal_places=2)
     term_months = models.PositiveIntegerField()
@@ -102,7 +146,7 @@ class Loan(models.Model):
 
 
 # -------------------------------
-# 5. Repayments (M-Pesa)
+# 7. Repayments
 # -------------------------------
 class Repayment(models.Model):
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE, related_name="repayments")
@@ -125,7 +169,7 @@ class Repayment(models.Model):
 
 
 # -------------------------------
-# 6. Reports (basic log)
+# 8. Reports (basic log)
 # -------------------------------
 class ReportLog(models.Model):
     generated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <h2>Loan Officer Dashboard</h2>
+  <p>Welcome, {{ request.user.username }}!</p>
+  <ul>
+    <li><a href="#">Register New Members</a></li>
+    <li><a href="#">Process Loan Applications</a></li>
+    <li><a href="#">Track Repayments</a></li>
+  </ul>
+</div>
+{% endblock %}

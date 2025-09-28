@@ -1,17 +1,21 @@
 from django.urls import path
 from . import views
+from .views import (
+    CustomLoginView, CustomLogoutView,
+    member_register,
+    admin_dashboard, manager_dashboard, officer_dashboard, member_dashboard,
+)
 
 urlpatterns = [
     path("", views.home, name="home"),
-    # Auth
-    path("register/", views.register, name="register"),
-    path("login/", views.user_login, name="login"),
-    path("logout/", views.user_logout, name="logout"),
+    # Authentication
+    path("login/", CustomLoginView.as_view(), name="login"),
+    path("logout/", CustomLogoutView.as_view(), name="logout"),
+    path("register/", member_register, name="member_register"),
 
-    # Admin user creation
-    path("admin/create-user/", views.admin_create_user, name="admin_create_user"),
-    
-#     # Other existing routes
-#     path("loans/", views.loan_list, name="loan_list"),
-#     path("loans/apply/", views.loan_apply, name="loan_apply"),
+    # Dashboards
+    path("dashboard/admin/", admin_dashboard, name="admin_dashboard"),
+    path("dashboard/manager/", manager_dashboard, name="manager_dashboard"),
+    path("dashboard/officer/", officer_dashboard, name="officer_dashboard"),
+    path("dashboard/member/", member_dashboard, name="member_dashboard"),
 ]

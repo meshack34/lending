@@ -1,10 +1,39 @@
-{% extends "lending/base.html" %}
+{% extends "base.html" %}
+
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Login</button>
-</form>
-<p>No account? <a href="{% url 'register' %}">Register</a></p>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-body p-4">
+          <h3 class="text-center mb-4">Login</h3>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="mb-3">
+              {{ form.username.label_tag }}
+              {{ form.username }}
+              {% for error in form.username.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              {{ form.password.label_tag }}
+              {{ form.password }}
+              {% for error in form.password.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

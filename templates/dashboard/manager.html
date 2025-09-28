@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <h2>Manager Dashboard - {{ request.user.office }}</h2>
+  <p>Welcome, {{ request.user.username }}!</p>
+  <ul>
+    <li><a href="#">View Assigned Officers</a></li>
+    <li><a href="#">Approve Loans</a></li>
+    <li><a href="#">Office Reports</a></li>
+  </ul>
+</div>
+{% endblock %}

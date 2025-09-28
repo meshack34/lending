@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+      <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-primary text-white text-center py-3">
+          <h4 class="mb-0">Member Registration</h4>
+        </div>
+        <div class="card-body p-4">
+          <!-- Display messages -->
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <!-- Username -->
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              {{ form.username }}
+              {% if form.username.errors %}
+                <div class="text-danger small">{{ form.username.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="text-danger small">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              {{ form.password1 }}
+              {% if form.password1.errors %}
+                <div class="text-danger small">{{ form.password1.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-3">
+              <label class="form-label">Confirm Password</label>
+              {{ form.password2 }}
+              {% if form.password2.errors %}
+                <div class="text-danger small">{{ form.password2.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- National ID -->
+            <div class="mb-3">
+              <label class="form-label">National ID</label>
+              {{ form.national_id }}
+              {% if form.national_id.errors %}
+                <div class="text-danger small">{{ form.national_id.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-3">
+              <label class="form-label">Phone Number</label>
+              {{ form.phone_number }}
+              {% if form.phone_number.errors %}
+                <div class="text-danger small">{{ form.phone_number.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Address -->
+            <div class="mb-3">
+              <label class="form-label">Address</label>
+              {{ form.address }}
+              {% if form.address.errors %}
+                <div class="text-danger small">{{ form.address.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Submit -->
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary btn-lg">Register</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer text-center">
+          Already have an account? <a href="{% url 'login' %}">Login here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

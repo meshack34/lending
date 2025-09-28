@@ -1,0 +1,10 @@
+<nav id="sidebar" class="bg-dark text-white vh-100 p-3">
+  <h5 class="text-center mb-4">Loan Officer</h5>
+  <ul class="nav flex-column">
+    <li class="nav-item"><a href="{% url 'officer_dashboard' %}" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+    <li class="nav-item"><a href="{% url 'loan_applications' %}" class="nav-link text-white"><i class="bi bi-journal-text"></i> Loan Applications</a></li>
+    <li class="nav-item"><a href="{% url 'loan_disbursements' %}" class="nav-link text-white"><i class="bi bi-cash-stack"></i> Disbursements</a></li>
+    <li class="nav-item"><a href="{% url 'repayments_log' %}" class="nav-link text-white"><i class="bi bi-receipt"></i> Repayments Log</a></li>
+    <li class="nav-item"><a href="{% url 'reports' %}" class="nav-link text-white"><i class="bi bi-bar-chart"></i> Reports</a></li>
+  </ul>
+</nav>
