@@ -96,10 +96,6 @@ def officer_dashboard(request):
     return render(request, "dashboard/officer.html")
 
 
-@login_required
-@member_required
-def member_dashboard(request):
-    return render(request, "dashboard/member.html")
 
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -124,20 +120,110 @@ User = get_user_model()
 # -------------------------------
 # Member Dashboard
 # -------------------------------
+
+from django.db.models.functions import TruncMonth
+from django.db.models import Sum
+
 @login_required
 @member_required
 def member_dashboard(request):
-    """Member overview: profile, active loan, repayment summary."""
+    """Member overview: profile, loans, repayment summary, and analytics."""
     profile = getattr(request.user, "profile", None)
-    active_loans = Loan.objects.filter(member=profile, status__in=["PENDING", "APPROVED", "DISBURSED"])
-    repayments = Repayment.objects.filter(loan__member=profile).order_by("-paid_at")[:5]
+
+    # All loans belonging to this member
+    loans = Loan.objects.filter(member=profile).order_by("-created_at")
+    active_loans = loans.filter(status__in=["PENDING", "APPROVED", "DISBURSED"])
+    closed_loans = loans.filter(status="CLOSED")
+
+    # Repayments
+    repayments = Repayment.objects.filter(loan__member=profile).order_by("-paid_at")
+    recent_repayments = repayments[:5]
+
+    # --- Analytics ---
+    total_loans = loans.count()
+    total_principal = loans.aggregate(total=Sum("principal_amount"))["total"] or 0
+    total_repaid = repayments.aggregate(total=Sum("amount"))["total"] or 0
+    outstanding_balance = max(total_principal - total_repaid, 0)
+
+    # Monthly repayment trend (last 6 months)
+    repayment_trend = (
+        repayments.annotate(month=TruncMonth("paid_at"))
+        .values("month")
+        .annotate(total=Sum("amount"))
+        .order_by("month")
+    )
 
     context = {
         "profile": profile,
         "active_loans": active_loans,
-        "recent_repayments": repayments,
+        "closed_loans": closed_loans,
+        "recent_repayments": recent_repayments,
+        "total_loans": total_loans,
+        "total_principal": total_principal,
+        "total_repaid": total_repaid,
+        "outstanding_balance": outstanding_balance,
+        "repayment_trend": repayment_trend,
     }
     return render(request, "dashboard/member.html", context)
+
+
+# @login_required
+# @member_required
+# def member_dashboard(request):
+#     """Member overview: profile, loans, repayment summary, and analytics."""
+#     profile = getattr(request.user, "profile", None)
+
+#     loans = Loan.objects.filter(member=profile).order_by("-created_at")
+#     active_loans = loans.filter(status__in=["PENDING", "APPROVED", "DISBURSED"])
+#     closed_loans = loans.filter(status="CLOSED")
+
+#     repayments = Repayment.objects.filter(loan__member=profile).order_by("-paid_at")
+#     recent_repayments = repayments[:5]
+
+#     # Analytics
+#     total_loans = loans.count()
+#     total_principal = sum(l.principal_amount for l in loans)
+#     total_repaid = sum(r.amount for r in repayments)
+#     outstanding_balance = total_principal - total_repaid
+
+#     # Monthly repayments trend (last 6 months)
+#     from django.db.models.functions import TruncMonth
+#     from django.db.models import Sum
+#     repayment_trend = (
+#         repayments.annotate(month=TruncMonth("paid_at"))
+#         .values("month")
+#         .annotate(total=Sum("amount"))
+#         .order_by("month")
+#     )
+
+#     context = {
+#         "profile": profile,
+#         "active_loans": active_loans,
+#         "closed_loans": closed_loans,
+#         "recent_repayments": recent_repayments,
+#         "total_loans": total_loans,
+#         "total_principal": total_principal,
+#         "total_repaid": total_repaid,
+#         "outstanding_balance": outstanding_balance,
+#         "repayment_trend": repayment_trend,
+#     }
+#     return render(request, "dashboard/member.html", context)
+
+
+# @login_required
+# @member_required
+# def member_dashboard(request):
+#     """Member overview: profile, active loan, repayment summary."""
+#     profile = getattr(request.user, "profile", None)
+#     active_loans = Loan.objects.filter(member=profile, status__in=["PENDING", "APPROVED", "DISBURSED"])
+#     repayments = Repayment.objects.filter(loan__member=profile).order_by("-paid_at")[:5]
+
+#     context = {
+#         "profile": profile,
+#         "active_loans": active_loans,
+#         "recent_repayments": repayments,
+#     }
+#     return render(request, "dashboard/member.html", context)
 
 
 # -------------------------------

@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     
     # our app
     'lending',
+    "django.contrib.humanize", 
 ]
 
 MIDDLEWARE = [

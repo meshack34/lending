@@ -1,12 +1,128 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="container py-5">
-  <h2>Member Dashboard</h2>
-  <p>Welcome, {{ request.user.username }}!</p>
-  <ul>
-    <li><a href="#">View Loan Applications</a></li>
-    <li><a href="#">Make Repayments</a></li>
-    <li><a href="#">View Loan Balance</a></li>
-  </ul>
+{% extends "base_member.html" %}
+{% load humanize %}
+
+{% block member_content %}
+<h2 class="mb-4">Welcome, {{ request.user.username }}</h2>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6>Total Loans</h6>
+        <h3>{{ total_loans }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6>Borrowed</h6>
+        <h3>KSh {{ total_principal|intcomma }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6>Repaid</h6>
+        <h3>KSh {{ total_repaid|intcomma }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6>Outstanding</h6>
+        <h3>KSh {{ outstanding_balance|intcomma }}</h3>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Recent Loans & Repayments -->
+<div class="row">
+  <div class="col-md-6">
+    <h5>Active Loans</h5>
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr><th>ID</th><th>Amount</th><th>Status</th><th>Created</th></tr>
+      </thead>
+      <tbody>
+        {% for loan in active_loans %}
+        <tr>
+          <td>{{ loan.id }}</td>
+          <td>KSh {{ loan.principal_amount|intcomma }}</td>
+          <td><span class="badge bg-info">{{ loan.status }}</span></td>
+          <td>{{ loan.created_at|date:"M d, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No active loans</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-6">
+    <h5>Recent Repayments</h5>
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr><th>ID</th><th>Loan</th><th>Amount</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        {% for r in recent_repayments %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td>{{ r.loan.id }}</td>
+          <td>KSh {{ r.amount|intcomma }}</td>
+          <td>{{ r.paid_at|date:"M d, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No repayments yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="row mt-4">
+  <div class="col-md-6">
+    <h5>Repayment Trend</h5>
+    <canvas id="repaymentChart"></canvas>
+  </div>
+  <div class="col-md-6">
+    <h5>Loan Status Breakdown</h5>
+    <canvas id="loanChart"></canvas>
+  </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const repaymentCtx = document.getElementById('repaymentChart').getContext('2d');
+new Chart(repaymentCtx, {
+  type: 'line',
+  data: {
+    labels: [{% for r in repayment_trend %}'{{ r.month|date:"M Y" }}',{% endfor %}],
+    datasets: [{
+      label: 'Repayments',
+      data: [{% for r in repayment_trend %}{{ r.total }},{% endfor %}],
+      borderColor: 'blue',
+      fill: false
+    }]
+  }
+});
+
+const loanCtx = document.getElementById('loanChart').getContext('2d');
+new Chart(loanCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Active', 'Closed'],
+    datasets: [{
+      data: [{{ active_loans.count }}, {{ closed_loans.count }}],
+      backgroundColor: ['#17a2b8', '#28a745']
+    }]
+  }
+});
+</script>
 {% endblock %}
