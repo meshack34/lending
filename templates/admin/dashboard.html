@@ -1,0 +1,50 @@
+{% extends "base_admin.html" %}
+{% load static %}
+
+{% block admin_content %}
+<div class="container-fluid">
+  <h2 class="mb-4">📊 Overview</h2>
+
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Companies</h5>
+          <p class="display-6">{{ stats.companies }}</p>
+          <a href="{% url 'company_list' %}" class="btn btn-sm btn-primary">Manage</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Offices</h5>
+          <p class="display-6">{{ stats.offices }}</p>
+          <a href="{% url 'office_list' %}" class="btn btn-sm btn-primary">Manage</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Users</h5>
+          <p class="display-6">{{ stats.users }}</p>
+          <a href="#" class="btn btn-sm btn-secondary disabled">Coming Soon</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Loans</h5>
+          <p class="display-6">{{ stats.loans }}</p>
+          <a href="#" class="btn btn-sm btn-secondary disabled">Coming Soon</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

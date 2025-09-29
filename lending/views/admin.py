@@ -1,9 +1,22 @@
+# lending/views/admin.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from ..models import Company, Office, User
 from ..forms import CompanyForm, OfficeForm
 from .mixins import admin_required
+from ..models import Company, Office, User, Loan
+
+
+@login_required
+@admin_required
+def admin_dashboard(request):
+    stats = {
+        "companies": Company.objects.count(),
+        "offices": Office.objects.count(),
+        "users": User.objects.count(),
+        "loans": Loan.objects.count(),
+    }
+    return render(request, "admin/dashboard.html", {"stats": stats})
 
 @login_required
 @admin_required

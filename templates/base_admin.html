@@ -1,4 +1,13 @@
 {% extends "base.html" %}
-{% block sidenav %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex">
   {% include "partials/_sidenav_admin.html" %}
+
+  <!-- Main content -->
+  <main class="flex-grow-1 p-4 overflow-auto" style="min-height:100vh;">
+    {% block admin_content %}{% endblock %}
+  </main>
+</div>
 {% endblock %}

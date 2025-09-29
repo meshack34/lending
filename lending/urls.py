@@ -1,5 +1,6 @@
+# lending/urls.py
 from django.urls import path
-from .views import auth, dashboards, member
+from .views import auth, dashboards, member, admin
 
 urlpatterns = [
     # Public
@@ -11,10 +12,18 @@ urlpatterns = [
     path("register/", auth.member_register, name="member_register"),
 
     # Dashboards
-    path("dashboard/admin/", dashboards.admin_dashboard, name="admin_dashboard"),
+    path("dashboard/admin/", admin.admin_dashboard, name="admin_dashboard"),
     path("dashboard/manager/", dashboards.manager_dashboard, name="manager_dashboard"),
     path("dashboard/officer/", dashboards.officer_dashboard, name="officer_dashboard"),
     path("dashboard/member/", member.member_dashboard, name="member_dashboard"),
+
+    # Admin Features - Companies
+    path("admin/companies/", admin.company_list, name="company_list"),
+    path("admin/companies/create/", admin.company_create, name="company_create"),
+
+    # Admin Features - Offices
+    path("admin/offices/", admin.office_list, name="office_list"),
+    path("admin/offices/create/", admin.office_create, name="office_create"),
 
     # Member features
     path("member/profile/", member.member_profile, name="member_profile"),

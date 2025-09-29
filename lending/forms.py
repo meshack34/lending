@@ -159,3 +159,29 @@ class LoanApplicationForm(forms.ModelForm):
                     f"Loan term cannot exceed {policy.max_term_months} months."
                 )
         return cleaned_data
+
+
+# lending/forms.py
+from django import forms
+from .models import Company, Office
+
+# Company Form
+class CompanyForm(forms.ModelForm):
+    class Meta:
+        model = Company
+        fields = ["name", "registration_number"]  # ✅ only existing fields
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "registration_number": forms.TextInput(attrs={"class": "form-control"}),
+        }
+
+# Office Form
+class OfficeForm(forms.ModelForm):
+    class Meta:
+        model = Office
+        fields = ["company", "name", "location"]  # ✅ matches model
+        widgets = {
+            "company": forms.Select(attrs={"class": "form-select"}),
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "location": forms.TextInput(attrs={"class": "form-control"}),
+        }
