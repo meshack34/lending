@@ -1,0 +1,35 @@
+{% extends "base_member.html" %}
+{% load humanize %}
+
+{% block member_content %}
+<div class="container py-3">
+  <h2 class="mb-4 text-primary"><i class="bi bi-file-earmark-plus"></i> Apply for a Loan</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card shadow border-0">
+        <div class="card-body">
+          <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                  <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                  <div class="text-danger small">{{ field.errors }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-success w-100">
+              <i class="bi bi-check-circle"></i> Submit Application
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

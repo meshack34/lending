@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     # our app
     'lending',
     "django.contrib.humanize", 
+    "widget_tweaks",
 ]
 
 MIDDLEWARE = [
@@ -118,3 +119,9 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 AUTH_USER_MODEL = "lending.User"
+
+# settings.py
+AUTHENTICATION_BACKENDS = [
+    "lending.auth_backends.EmailOrPhoneBackend",  # custom
+    "django.contrib.auth.backends.ModelBackend", # fallback
+]

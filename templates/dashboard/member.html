@@ -1,6 +1,5 @@
 {% extends "base_member.html" %}
 {% load humanize %}
-{% load json_script %}
 
 {% block member_content %}
 <div class="container-fluid py-3">
@@ -10,37 +9,33 @@
 
   <!-- Summary Cards -->
   <div class="row g-3 mb-4">
-    <!-- Total Loans -->
     <div class="col-md-3">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
+      <div class="card shadow-sm border-0 text-center">
+        <div class="card-body">
           <h6 class="text-muted">Total Loans</h6>
           <h3 class="fw-bold">{{ total_loans }}</h3>
         </div>
       </div>
     </div>
-    <!-- Borrowed -->
     <div class="col-md-3">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
+      <div class="card shadow-sm border-0 text-center">
+        <div class="card-body">
           <h6 class="text-muted">Borrowed</h6>
           <h3 class="fw-bold text-primary">KSh {{ total_principal|intcomma }}</h3>
         </div>
       </div>
     </div>
-    <!-- Repaid -->
     <div class="col-md-3">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
+      <div class="card shadow-sm border-0 text-center">
+        <div class="card-body">
           <h6 class="text-muted">Repaid</h6>
           <h3 class="fw-bold text-success">KSh {{ total_repaid|intcomma }}</h3>
         </div>
       </div>
     </div>
-    <!-- Outstanding -->
     <div class="col-md-3">
-      <div class="card shadow-sm border-0">
-        <div class="card-body text-center">
+      <div class="card shadow-sm border-0 text-center">
+        <div class="card-body">
           <h6 class="text-muted">Outstanding</h6>
           <h3 class="fw-bold text-danger">KSh {{ outstanding_balance|intcomma }}</h3>
         </div>
@@ -50,7 +45,6 @@
 
   <!-- Active Loans & Recent Repayments -->
   <div class="row g-3">
-    <!-- Active Loans -->
     <div class="col-md-6">
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white"><h5 class="mb-0">Active Loans</h5></div>
@@ -76,7 +70,6 @@
       </div>
     </div>
 
-    <!-- Recent Repayments -->
     <div class="col-md-6">
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white"><h5 class="mb-0">Recent Repayments</h5></div>
@@ -125,17 +118,26 @@
 </div>
 
 <!-- Chart.js -->
-{% comment %} Embed data safely as JSON {% endcomment %}
-{{ repayment_trend|json_script:"repaymentTrendData" }}
-{{ active_loans.count|json_script:"activeLoansCount" }}
-{{ closed_loans.count|json_script:"closedLoansCount" }}
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const repaymentTrend = JSON.parse(document.getElementById('repaymentTrendData').textContent);
-const repaymentLabels = repaymentTrend.map(r => r.month ? new Date(r.month).toLocaleString('default', { month: 'short', year: 'numeric' }) : 'N/A');
-const repaymentData = repaymentTrend.map(r => r.total || 0);
+// Prepare Repayment Trend data
+const repaymentLabels = [
+  {% for r in repayment_trend %}
+    "{{ r.month|date:'M Y' }}"{% if not forloop.last %},{% endif %}
+  {% empty %}
+    "No Data"
+  {% endfor %}
+];
 
+const repaymentData = [
+  {% for r in repayment_trend %}
+    {{ r.total }}{% if not forloop.last %},{% endif %}
+  {% empty %}
+    0
+  {% endfor %}
+];
+
+// Line Chart - Repayment Trend
 const repaymentCtx = document.getElementById('repaymentChart').getContext('2d');
 new Chart(repaymentCtx, {
   type: 'line',
@@ -157,20 +159,19 @@ new Chart(repaymentCtx, {
   }
 });
 
+// Doughnut Chart - Loan Status Breakdown
 const loanCtx = document.getElementById('loanChart').getContext('2d');
-const activeCount = JSON.parse(document.getElementById('activeLoansCount').textContent);
-const closedCount = JSON.parse(document.getElementById('closedLoansCount').textContent);
-
 new Chart(loanCtx, {
   type: 'doughnut',
   data: {
     labels: ['Active', 'Closed'],
     datasets: [{
-      data: [activeCount, closedCount],
+      data: [{{ active_loans.count }}, {{ closed_loans.count }}],
       backgroundColor: ['#17a2b8', '#28a745']
     }]
   },
   options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
 });
 </script>
+
 {% endblock %}

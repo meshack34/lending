@@ -10,6 +10,7 @@
           <h4 class="mb-0">Member Registration</h4>
         </div>
         <div class="card-body p-4">
+          
           <!-- Display messages -->
           {% if messages %}
             {% for message in messages %}
@@ -22,13 +23,31 @@
 
           <form method="post" novalidate>
             {% csrf_token %}
-            
-            <!-- Username -->
+
+            <!-- First Name -->
             <div class="mb-3">
-              <label class="form-label">Username</label>
-              {{ form.username }}
-              {% if form.username.errors %}
-                <div class="text-danger small">{{ form.username.errors.0 }}</div>
+              <label class="form-label">First Name</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+                <div class="text-danger small">{{ form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Middle Name (optional) -->
+            <div class="mb-3">
+              <label class="form-label">Middle Name (Optional)</label>
+              {{ form.middle_name }}
+              {% if form.middle_name.errors %}
+                <div class="text-danger small">{{ form.middle_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Last Name -->
+            <div class="mb-3">
+              <label class="form-label">Last Name</label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}
+                <div class="text-danger small">{{ form.last_name.errors.0 }}</div>
               {% endif %}
             </div>
 
@@ -38,6 +57,15 @@
               {{ form.email }}
               {% if form.email.errors %}
                 <div class="text-danger small">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="mb-3">
+              <label class="form-label">Date of Birth</label>
+              {{ form.date_of_birth }}
+              {% if form.date_of_birth.errors %}
+                <div class="text-danger small">{{ form.date_of_birth.errors.0 }}</div>
               {% endif %}
             </div>
 
@@ -92,6 +120,7 @@
             </div>
           </form>
         </div>
+
         <div class="card-footer text-center">
           Already have an account? <a href="{% url 'login' %}">Login here</a>
         </div>

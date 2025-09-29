@@ -1,0 +1,41 @@
+{% extends "base_member.html" %}
+{% load humanize %}
+
+{% block member_content %}
+<div class="container-fluid py-3">
+  <h2 class="mb-4">All Repayments</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+          <table class="table table-hover table-striped mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Loan ID</th>
+                <th>Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in repayments %}
+              <tr>
+                <td>#{{ r.id }}</td>
+                <td>#{{ r.loan.id }}</td>
+                <td>KSh {{ r.amount|intcomma }}</td>
+                <td>{{ r.paid_at|date:"M d, Y" }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="text-center">No repayments made yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

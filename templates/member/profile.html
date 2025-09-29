@@ -1,0 +1,114 @@
+{% extends "base_member.html" %}
+{% load static %}
+{% load humanize %}
+{% load widget_tweaks %}
+
+{% block member_content %}
+<div class="container-fluid py-4">
+  <h2 class="mb-4">My Profile</h2>
+
+  <div class="row g-4">
+    <!-- Profile Summary -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 text-center">
+        <div class="card-body">
+          <!-- Profile Picture -->
+          <img src="{% if request.user.profile.profile_picture %}
+                       {{ request.user.profile.profile_picture.url }}
+                     {% else %}
+                       {% static 'images/default-avatar.png' %}
+                     {% endif %}"
+               alt="Profile Picture"
+               class="rounded-circle mb-3 shadow-sm border"
+               width="140" height="140">
+
+          <!-- Full Name & Role -->
+          <h4 class="fw-bold">
+            {{ request.user.first_name }} 
+            {% if request.user.profile.middle_name %} {{ request.user.profile.middle_name }} {% endif %}
+            {{ request.user.last_name }}
+          </h4>
+          <p class="text-muted small">{{ request.user.get_role_display }}</p>
+
+          <hr>
+
+          <!-- Contact Info -->
+          <div class="text-start ps-3">
+            <p class="mb-2">
+              <i class="bi bi-envelope-fill text-primary"></i> 
+              <strong>Email:</strong> {{ request.user.email }}
+            </p>
+
+            <p class="mb-2">
+              <i class="bi bi-person-vcard text-primary"></i> 
+              <strong>National ID:</strong> {{ request.user.profile.national_id }}
+            </p>
+
+            <p class="mb-2">
+              <i class="bi bi-telephone-fill text-primary"></i> 
+              <strong>Phone:</strong> {{ request.user.profile.phone_number }}
+            </p>
+
+            {% if request.user.profile.alternative_phone %}
+            <p class="mb-2">
+              <i class="bi bi-telephone text-secondary"></i> 
+              <strong>Alt Phone:</strong> {{ request.user.profile.alternative_phone }}
+            </p>
+            {% endif %}
+
+            {% if request.user.profile.date_of_birth %}
+            <p class="mb-2">
+              <i class="bi bi-calendar-date text-success"></i> 
+              <strong>DOB:</strong> {{ request.user.profile.date_of_birth }}
+            </p>
+            {% endif %}
+
+            <p class="mb-0">
+              <i class="bi bi-geo-alt-fill text-danger"></i> 
+              <strong>Address:</strong> {{ request.user.profile.address|default:"N/A" }}
+            </p>
+          </div>
+        </div>
+        <div class="card-footer bg-light text-center">
+          <a href="{% url 'member_dashboard' %}" class="btn btn-sm btn-outline-primary me-2">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+          <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Edit Form -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Update Profile</h5>
+        </div>
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data" class="needs-validation">
+            {% csrf_token %}
+
+            <div class="row">
+              {% for field in form %}
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-semibold">{{ field.label }}</label>
+                  {{ field|add_class:"form-control" }}
+                  {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors }}</div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-save"></i> Save Changes
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

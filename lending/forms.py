@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model
 from .models import MemberProfile, Loan
+from .models import MemberProfile, Loan, LoanPolicy
 
 User = get_user_model()
 
@@ -9,13 +10,15 @@ User = get_user_model()
 # -------------------------------
 # Login Form
 # -------------------------------
+# forms.py
+
 class CustomLoginForm(AuthenticationForm):
-    """Custom login form styled with Bootstrap."""
-    username = forms.CharField(
-        label="Username",
+    """Custom login form styled with Bootstrap (email/phone + password)."""
+    username = forms.CharField( 
+        label="Email or Phone",
         widget=forms.TextInput(attrs={
             "class": "form-control",
-            "placeholder": "Enter your username",
+            "placeholder": "Enter your email or phone number",
             "autofocus": True,
         }),
     )
@@ -32,25 +35,60 @@ class CustomLoginForm(AuthenticationForm):
 # Member Registration
 # -------------------------------
 class MemberRegistrationForm(forms.ModelForm):
-    password1 = forms.CharField(widget=forms.PasswordInput, label="Password")
-    password2 = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}), label="Password")
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}), label="Confirm Password")
     national_id = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     phone_number = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     address = forms.CharField(required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
+    date_of_birth = forms.DateField(
+        widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+        required=True,
+        label="Date of Birth"
+    )
 
     class Meta:
         model = User
-        fields = ["username", "email"]
+        fields = ["first_name", "middle_name", "last_name", "email"]
+
+        widgets = {
+            "first_name": forms.TextInput(attrs={"class": "form-control"}),
+            "middle_name": forms.TextInput(attrs={"class": "form-control"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control"}),
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+        }
 
     def clean_password2(self):
         if self.cleaned_data.get("password1") != self.cleaned_data.get("password2"):
             raise forms.ValidationError("Passwords do not match.")
         return self.cleaned_data.get("password2")
 
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Email is already registered.")
+        return email
+
+    def clean_national_id(self):
+        national_id = self.cleaned_data.get("national_id")
+        if MemberProfile.objects.filter(national_id=national_id).exists():
+            raise forms.ValidationError("National ID already exists.")
+        return national_id
+
     def save(self, commit=True):
         user = super().save(commit=False)
+
+        # Auto-generate username
+        base_username = (self.cleaned_data["first_name"] + self.cleaned_data["last_name"]).lower()
+        username = base_username
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}{counter}"
+            counter += 1
+        user.username = username
+
         user.set_password(self.cleaned_data["password1"])
         user.role = "MEMBER"
+
         if commit:
             user.save()
             MemberProfile.objects.create(
@@ -58,32 +96,66 @@ class MemberRegistrationForm(forms.ModelForm):
                 national_id=self.cleaned_data["national_id"],
                 phone_number=self.cleaned_data["phone_number"],
                 address=self.cleaned_data.get("address"),
+                date_of_birth=self.cleaned_data.get("date_of_birth"),
             )
         return user
+
+
 
 
 # -------------------------------
 # Member Profile Update
 # -------------------------------
+
 class MemberProfileForm(forms.ModelForm):
     class Meta:
         model = MemberProfile
         exclude = ["user", "national_id"]
 
-
 # -------------------------------
 # Loan Application
 # -------------------------------
+# forms.py
+from django import forms
+from .models import Loan, LoanPolicy
+
 class LoanApplicationForm(forms.ModelForm):
     class Meta:
         model = Loan
         fields = ["policy", "principal_amount", "term_months", "purpose"]
+        widgets = {
+            "purpose": forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
+        }
 
     def __init__(self, *args, **kwargs):
         self.member = kwargs.pop("member", None)
         super().__init__(*args, **kwargs)
 
         if self.member:
-            company = self.member.user.office.company if self.member.user.office else None
+            office = getattr(self.member.user, "office", None)
+            company = office.company if office else None
             if company:
                 self.fields["policy"].queryset = company.loan_policies.all()
+            else:
+                self.fields["policy"].queryset = LoanPolicy.objects.none()
+
+        for field in self.fields.values():
+            if not isinstance(field.widget, forms.Textarea):
+                field.widget.attrs.update({"class": "form-control"})
+
+    def clean(self):
+        cleaned_data = super().clean()
+        policy = cleaned_data.get("policy")
+        amount = cleaned_data.get("principal_amount")
+        term = cleaned_data.get("term_months")
+
+        if policy:
+            if amount and (amount < policy.min_amount or amount > policy.max_amount):
+                raise forms.ValidationError(
+                    f"Loan amount must be between {policy.min_amount} and {policy.max_amount}."
+                )
+            if term and term > policy.max_term_months:
+                raise forms.ValidationError(
+                    f"Loan term cannot exceed {policy.max_term_months} months."
+                )
+        return cleaned_data

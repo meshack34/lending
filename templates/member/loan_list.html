@@ -1,0 +1,55 @@
+{% extends "base_member.html" %}
+
+{% block member_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>My Loan Applications</h4>
+  <a href="{% url 'loan_apply' %}" class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i> Apply Loan
+  </a>
+</div>
+
+{% if loans %}
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Policy</th>
+          <th>Principal</th>
+          <th>Term</th>
+          <th>Interest Rate</th>
+          <th>Status</th>
+          <th>Applied At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in loans %}
+          <tr>
+            <td>{{ loan.id }}</td>
+            <td>{{ loan.policy.name }}</td>
+            <td>{{ loan.principal_amount }}</td>
+            <td>{{ loan.term_months }} months</td>
+            <td>{{ loan.interest_rate }}%</td>
+            <td>
+              <span class="badge bg-{{ loan.status|lower }}">
+                {{ loan.get_status_display }}
+              </span>
+            </td>
+            <td>{{ loan.created_at|date:"M d, Y" }}</td>
+            <td>
+              <a href="{% url 'loan_detail' loan.pk %}" class="btn btn-sm btn-info">View</a>
+              {% if loan.status == "PENDING" %}
+                <a href="{% url 'loan_edit' loan.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'loan_delete' loan.pk %}" class="btn btn-sm btn-danger">Delete</a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-info">You have no loan applications yet.</div>
+{% endif %}
+{% endblock %}

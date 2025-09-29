@@ -29,14 +29,20 @@ class Office(models.Model):
 # -------------------------------
 class User(AbstractUser):
     ROLE_CHOICES = [
-        ("ADMIN", "Admin"),         # System-wide superuser
-        ("MANAGER", "Manager"),     # Manages officers within an office
+        ("ADMIN", "Admin"),
+        ("MANAGER", "Manager"),
         ("OFFICER", "Loan Officer"),
         ("MEMBER", "Member"),
     ]
 
+    middle_name = models.CharField(max_length=150, blank=True, null=True)  # optional
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="MEMBER")
     office = models.ForeignKey(Office, on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
+
+    def full_name(self):
+        parts = [self.first_name, self.middle_name, self.last_name]
+        return " ".join([p for p in parts if p])
+
 
     def is_admin(self):
         return self.role == "ADMIN"
@@ -52,9 +58,10 @@ class User(AbstractUser):
 
     def __str__(self):
         office_name = self.office.name if self.office else "No Office"
-        return f"{self.username} ({self.role}) - {office_name}"
+        return f"{self.full_name()} ({self.role}) - {office_name}"
 
 
+    
 # -------------------------------
 # 3. Manager ↔ Officers Relationship
 # -------------------------------
@@ -80,9 +87,11 @@ class MemberProfile(models.Model):
     alternative_phone = models.CharField(max_length=15, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} ({self.national_id})"
+
 
 
 # -------------------------------

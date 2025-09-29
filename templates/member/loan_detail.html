@@ -1,0 +1,55 @@
+{% extends "base_member.html" %}
+{% load humanize %}
+
+{% block member_content %}
+<div class="container-fluid py-3">
+  <h2 class="mb-4">Loan #{{ loan.id }} Details</h2>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5>Loan Information</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Amount: KSh {{ loan.principal_amount|intcomma }}</li>
+            <li class="list-group-item">Interest Rate: {{ loan.interest_rate }}%</li>
+            <li class="list-group-item">Status: {{ loan.status }}</li>
+            <li class="list-group-item">Created: {{ loan.created_at|date:"M d, Y" }}</li>
+            <li class="list-group-item">Policy: {{ loan.policy.name }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5>Repayment History</h5>
+          <table class="table table-hover table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in repayments %}
+              <tr>
+                <td>#{{ r.id }}</td>
+                <td>KSh {{ r.amount|intcomma }}</td>
+                <td>{{ r.paid_at|date:"M d, Y" }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="text-center">No repayments yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
