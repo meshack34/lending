@@ -185,3 +185,121 @@ class OfficeForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "location": forms.TextInput(attrs={"class": "form-control"}),
         }
+
+from django import forms
+
+# class AdminUserForm(forms.ModelForm):
+#     password1 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}), required=False)
+#     password2 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}), required=False)
+
+#     class Meta:
+#         model = User
+#         fields = ["first_name", "middle_name", "last_name", "email", "role", "office"]
+
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         p1 = cleaned_data.get("password1")
+#         p2 = cleaned_data.get("password2")
+#         if p1 or p2:
+#             if p1 != p2:
+#                 raise forms.ValidationError("Passwords do not match")
+#         return cleaned_data
+
+#     def save(self, commit=True):
+#         user = super().save(commit=False)
+#         password = self.cleaned_data.get("password1")
+#         if password:
+#             user.set_password(password)
+#         if commit:
+#             user.save()
+#         return user
+
+
+ # lending/forms.py
+
+from django import forms
+from .models import User, Office
+
+class AdminUserForm(forms.ModelForm):
+    password1 = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control"}),
+        required=False,
+        help_text="Leave blank to keep current password (for edit)."
+    )
+    password2 = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control"}),
+        required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ["first_name", "middle_name", "last_name", "email", "role", "office"]
+        widgets = {
+            "first_name": forms.TextInput(attrs={"class": "form-control"}),
+            "middle_name": forms.TextInput(attrs={"class": "form-control"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control"}),
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+            "role": forms.Select(attrs={"class": "form-select"}),
+            "office": forms.Select(attrs={"class": "form-select"}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+
+        if password1 or password2:
+            if password1 != password2:
+                self.add_error("password2", "Passwords do not match.")
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        password = self.cleaned_data.get("password1")
+        if password:
+            user.set_password(password)
+        if commit:
+            user.save()
+        return user
+
+
+from django import forms
+from .models import User, ManagerOfficerAssignment
+
+class AdminAssignOfficersForm(forms.Form):
+    manager = forms.ModelChoiceField(
+        queryset=User.objects.filter(role="MANAGER"),
+        label="Select Manager",
+        widget=forms.Select(attrs={"class": "form-select"})
+    )
+    officers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.filter(role="OFFICER"),
+        label="Assign Officers",
+        widget=forms.SelectMultiple(attrs={"class": "form-select"})
+    )
+
+    def save(self):
+        manager = self.cleaned_data['manager']
+        officers = self.cleaned_data['officers']
+        
+        # Remove previous assignments for this manager
+        ManagerOfficerAssignment.objects.filter(manager=manager).delete()
+        
+        # Create new assignments
+        for officer in officers:
+            ManagerOfficerAssignment.objects.create(manager=manager, officer=officer)
+
+class LoanPolicyForm(forms.ModelForm):
+    class Meta:
+        model = LoanPolicy
+        fields = ["company", "name", "interest_rate", "min_amount", "max_amount", "max_term_months"]
+        widgets = {
+            "company": forms.Select(attrs={"class": "form-select"}),
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "interest_rate": forms.NumberInput(attrs={"class": "form-control", "step": "0.01"}),
+            "min_amount": forms.NumberInput(attrs={"class": "form-control"}),
+            "max_amount": forms.NumberInput(attrs={"class": "form-control"}),
+            "max_term_months": forms.NumberInput(attrs={"class": "form-control"}),
+        }

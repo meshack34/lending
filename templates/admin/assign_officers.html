@@ -1,0 +1,47 @@
+{% extends "base_admin.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>{{ title }}</h3>
+
+    <form method="post" class="mt-3">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_manager" class="form-label">Manager</label>
+            {{ form.manager }}
+            {% if form.manager.errors %}
+            <div class="text-danger">{{ form.manager.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="id_officers" class="form-label">Officers</label>
+            {{ form.officers }}
+            {% if form.officers.errors %}
+            <div class="text-danger">{{ form.officers.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Assign Officers</button>
+    </form>
+
+    <hr class="my-4">
+
+    <h5>Current Assignments</h5>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Manager</th>
+                <th>Officers</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assignment in assignments %}
+            <tr>
+                <td>{{ assignment.manager.get_full_name }}</td>
+                <td>{{ assignment.officer.get_full_name }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2">No assignments yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

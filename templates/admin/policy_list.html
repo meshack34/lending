@@ -1,0 +1,33 @@
+{% extends "base_admin.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Loan Policies</h3>
+  <a href="{% url 'policy_create' %}" class="btn btn-primary mb-3">+ Add Policy</a>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Company</th>
+        <th>Name</th>
+        <th>Interest (%)</th>
+        <th>Min Amount</th>
+        <th>Max Amount</th>
+        <th>Max Term (Months)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for policy in policies %}
+      <tr>
+        <td>{{ policy.company.name }}</td>
+        <td>{{ policy.name }}</td>
+        <td>{{ policy.interest_rate }}</td>
+        <td>{{ policy.min_amount }}</td>
+        <td>{{ policy.max_amount }}</td>
+        <td>{{ policy.max_term_months }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center">No policies found</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

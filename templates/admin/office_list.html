@@ -1,0 +1,36 @@
+{% extends "base_admin.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+  <h2 class="mb-3">Offices</h2>
+  <a href="{% url 'office_create' %}" class="btn btn-primary mb-3">+ Add Office</a>
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Company</th>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for office in offices %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ office.company.name }}</td>
+        <td>{{ office.name }}</td>
+        <td>{{ office.location }}</td>
+        <td>
+          <a href="{% url 'office_edit' office.id %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'office_delete' office.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No offices found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

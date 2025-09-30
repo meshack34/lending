@@ -36,6 +36,7 @@ class User(AbstractUser):
     ]
 
     middle_name = models.CharField(max_length=150, blank=True, null=True)  # optional
+    email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="MEMBER")
     office = models.ForeignKey(Office, on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
 

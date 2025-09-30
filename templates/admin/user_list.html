@@ -1,0 +1,67 @@
+{% extends "base_admin.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Users</h3>
+
+  <!-- Add User Button -->
+  <div class="mb-3 text-end">
+    <a href="{% url 'user_create' %}" class="btn btn-success">+ Add User</a>
+  </div>
+
+  <!-- Filters -->
+  <form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+      <select name="role" class="form-select" onchange="this.form.submit()">
+        <option value="">All Roles</option>
+        {% for value, label in roles %}
+          <option value="{{ value }}" {% if selected_role == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <input type="text" name="q" value="{{ search_query }}" placeholder="Search name, email, username" class="form-control">
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+  </form>
+
+  <!-- Users Table -->
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Office</th>
+        <th>Joined</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.full_name }}</td>
+        <td>{{ user.email }}</td>
+        <td><span class="badge bg-info">{{ user.get_role_display }}</span></td>
+        <td>{% if user.office %}{{ user.office.name }}{% else %} — {% endif %}</td>
+        <td>{{ user.date_joined|date:"M d, Y" }}</td>
+        <td>
+          <a href="{% url 'user_edit' user.id %}" class="btn btn-sm btn-primary">Edit</a>
+          {% if not user.is_superuser %}
+          <a href="{% url 'user_delete' user.id %}" class="btn btn-sm btn-danger"
+             onclick="return confirm('Are you sure you want to delete {{ user.full_name }}?');">
+             Delete
+          </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="text-center">No users found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

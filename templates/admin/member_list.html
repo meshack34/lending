@@ -1,0 +1,54 @@
+{% extends "base_admin.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+  <h2 class="mb-3">Members</h2>
+  <a href="{% url 'member_create' %}" class="btn btn-primary mb-3">+ Add Member</a>
+  
+  <form method="get" class="mb-3 d-flex gap-2">
+    <input type="text" name="q" class="form-control" placeholder="Search by name, email, ID" value="{{ search_query }}">
+    <button type="submit" class="btn btn-secondary">Search</button>
+  </form>
+
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>ID Number</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for member in members %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ member.user.first_name }} {{ member.user.last_name }}</td>
+        <td>{{ member.user.email }}</td>
+        <td>{{ member.phone_number }}</td>
+        <td>{{ member.national_id }}</td>
+        <td>
+          {% if member.is_active %}
+            <span class="badge bg-success">Active</span>
+          {% else %}
+            <span class="badge bg-warning">Suspended</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'member_edit' member.id %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'member_suspend' member.id %}" class="btn btn-sm btn-secondary">
+            {% if member.is_active %}Suspend{% else %}Activate{% endif %}
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7">No members found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

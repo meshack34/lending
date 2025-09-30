@@ -2,48 +2,87 @@
 {% load static %}
 
 {% block admin_content %}
-<div class="container-fluid">
-  <h2 class="mb-4">📊 Overview</h2>
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary">📊 Admin Dashboard</h2>
+    <small class="text-muted">Overview of your institution</small>
+  </div>
 
-  <div class="row">
-    <div class="col-md-3">
-      <div class="card text-center shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">Companies</h5>
-          <p class="display-6">{{ stats.companies }}</p>
-          <a href="{% url 'company_list' %}" class="btn btn-sm btn-primary">Manage</a>
+  <div class="row g-4">
+    <!-- Companies -->
+    <div class="col-sm-6 col-lg-3">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-buildings display-4 text-primary mb-3"></i>
+          <h5 class="card-title fw-semibold">Companies</h5>
+          <p class="display-6 fw-bold">{{ stats.companies }}</p>
+          <a href="{% url 'company_list' %}" class="btn btn-outline-primary btn-sm mt-2 w-75">Manage</a>
         </div>
       </div>
     </div>
 
-    <div class="col-md-3">
-      <div class="card text-center shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">Offices</h5>
-          <p class="display-6">{{ stats.offices }}</p>
-          <a href="{% url 'office_list' %}" class="btn btn-sm btn-primary">Manage</a>
+    <!-- Offices -->
+    <div class="col-sm-6 col-lg-3">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-building display-4 text-success mb-3"></i>
+          <h5 class="card-title fw-semibold">Offices</h5>
+          <p class="display-6 fw-bold">{{ stats.offices }}</p>
+          <a href="{% url 'office_list' %}" class="btn btn-outline-success btn-sm mt-2 w-75">Manage</a>
         </div>
       </div>
     </div>
 
-    <div class="col-md-3">
-      <div class="card text-center shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">Users</h5>
-          <p class="display-6">{{ stats.users }}</p>
-          <a href="#" class="btn btn-sm btn-secondary disabled">Coming Soon</a>
+    <!-- Users -->
+    <div class="col-sm-6 col-lg-3">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-people display-4 text-warning mb-3"></i>
+          <h5 class="card-title fw-semibold">Users</h5>
+          <p class="display-6 fw-bold">{{ stats.users }}</p>
+          <a href="{% url 'user_list' %}" class="btn btn-outline-warning btn-sm mt-2 w-75">Manage</a>
         </div>
       </div>
     </div>
 
-    <div class="col-md-3">
-      <div class="card text-center shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">Loans</h5>
-          <p class="display-6">{{ stats.loans }}</p>
-          <a href="#" class="btn btn-sm btn-secondary disabled">Coming Soon</a>
+    <!-- Loans -->
+    <div class="col-sm-6 col-lg-3">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-cash-stack display-4 text-danger mb-3"></i>
+          <h5 class="card-title fw-semibold">Loans</h5>
+          <p class="display-6 fw-bold">{{ stats.loans }}</p>
+          <a href="#" class="btn btn-outline-secondary btn-sm mt-2 w-75 disabled">Coming Soon</a>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Optional: Quick Links / Actions -->
+  <div class="row mt-5 g-3">
+    <div class="col-md-4">
+      <a href="{% url 'user_create' %}" class="card text-white bg-primary shadow-sm h-100 text-decoration-none">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-person-plus-fill display-4 mb-2"></i>
+          <h6 class="card-title fw-bold text-center">Add New User</h6>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'assign_officers' %}" class="card text-white bg-success shadow-sm h-100 text-decoration-none">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-diagram-3-fill display-4 mb-2"></i>
+          <h6 class="card-title fw-bold text-center">Assign Officers</h6>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'policy_list' %}" class="card text-white bg-warning shadow-sm h-100 text-decoration-none">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-cash-coin display-4 mb-2"></i>
+          <h6 class="card-title fw-bold text-center">Loan Policies</h6>
+        </div>
+      </a>
     </div>
   </div>
 </div>

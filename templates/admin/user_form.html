@@ -1,0 +1,92 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3>{{ title }}</h3>
+
+  <form method="post" class="mt-3">
+    {% csrf_token %}
+
+    <div class="row g-3">
+      <!-- First Name -->
+      <div class="col-md-4">
+        <label for="id_first_name" class="form-label">First Name</label>
+        {{ form.first_name }}
+        {% if form.first_name.errors %}
+          <div class="text-danger">{{ form.first_name.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Middle Name -->
+      <div class="col-md-4">
+        <label for="id_middle_name" class="form-label">Middle Name</label>
+        {{ form.middle_name }}
+        {% if form.middle_name.errors %}
+          <div class="text-danger">{{ form.middle_name.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Last Name -->
+      <div class="col-md-4">
+        <label for="id_last_name" class="form-label">Last Name</label>
+        {{ form.last_name }}
+        {% if form.last_name.errors %}
+          <div class="text-danger">{{ form.last_name.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Email -->
+      <div class="col-md-6">
+        <label for="id_email" class="form-label">Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <div class="text-danger">{{ form.email.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Role -->
+      <div class="col-md-3">
+        <label for="id_role" class="form-label">Role</label>
+        {{ form.role }}
+        {% if form.role.errors %}
+          <div class="text-danger">{{ form.role.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Office -->
+      <div class="col-md-3">
+        <label for="id_office" class="form-label">Office</label>
+        {{ form.office }}
+        {% if form.office.errors %}
+          <div class="text-danger">{{ form.office.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Password -->
+      <div class="col-md-6">
+        <label for="id_password1" class="form-label">
+          Password{% if title == "Edit User" %} (leave blank to keep current){% endif %}
+        </label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+          <div class="text-danger">{{ form.password1.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="col-md-6">
+        <label for="id_password2" class="form-label">Confirm Password</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+          <div class="text-danger">{{ form.password2.errors.0 }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">{{ title }}</button>
+      <a href="{% url 'user_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

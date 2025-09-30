@@ -1,48 +1,106 @@
 {% load static %}
 
-<nav id="sidebar" class="bg-dark text-white vh-100 d-flex flex-column p-3" style="width:240px;">
+<nav
+  id="sidebar"
+  class="bg-dark text-white vh-100 d-flex flex-column p-3 shadow"
+  style="width: 260px"
+>
+  <!-- Brand -->
+  <div class="mb-4 text-center">
+    <h4 class="fw-bold text-primary">Lending Admin</h4>
+  </div>
+
   <!-- Navigation Links -->
-  <ul class="nav flex-column mb-auto flex-grow-1">
-    <li class="nav-item">
-      <a href="{% url 'admin_dashboard' %}"
-         class="nav-link text-white {% if request.resolver_match.url_name == 'admin_dashboard' %}active bg-primary{% endif %}">
-        <i class="bi bi-speedometer2"></i> Dashboard
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{% url 'company_list' %}"
-         class="nav-link text-white {% if request.resolver_match.url_name == 'company_list' %}active bg-primary{% endif %}">
-        <i class="bi bi-buildings"></i> Companies
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{% url 'office_list' %}"
-         class="nav-link text-white {% if request.resolver_match.url_name == 'office_list' %}active bg-primary{% endif %}">
-        <i class="bi bi-building"></i> Offices
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link text-muted disabled">
-        <i class="bi bi-people"></i> Users (Coming Soon)
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link text-muted disabled">
-        <i class="bi bi-cash-coin"></i> Loan Policies (Coming Soon)
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link text-muted disabled">
-        <i class="bi bi-bar-chart"></i> Reports (Coming Soon)
+  <ul class="nav flex-column mb-auto">
+    <!-- Dashboard -->
+    <li class="nav-item mb-2">
+      <a
+        href="{% url 'admin_dashboard' %}"
+        class="nav-link d-flex align-items-center rounded px-3 py-2 {% if request.resolver_match.url_name == 'admin_dashboard' %}active bg-primary text-white{% else %}text-light hover-bg-secondary{% endif %}"
+      >
+        <i class="bi bi-speedometer2 me-2"></i> Dashboard
       </a>
     </li>
 
-    <!-- Logout at bottom -->
+    <!-- Companies -->
+    <li class="nav-item mb-2">
+      <a
+        href="{% url 'company_list' %}"
+        class="nav-link d-flex align-items-center rounded px-3 py-2 {% if request.resolver_match.url_name == 'company_list' or request.resolver_match.url_name == 'company_create' or request.resolver_match.url_name == 'company_edit' %}active bg-primary text-white{% else %}text-light hover-bg-secondary{% endif %}"
+      >
+        <i class="bi bi-buildings me-2"></i> Companies
+      </a>
+    </li>
+
+    <!-- Offices -->
+    <li class="nav-item mb-2">
+      <a
+        href="{% url 'office_list' %}"
+        class="nav-link d-flex align-items-center rounded px-3 py-2 {% if request.resolver_match.url_name == 'office_list' or request.resolver_match.url_name == 'office_create' or request.resolver_match.url_name == 'office_edit' %}active bg-primary text-white{% else %}text-light hover-bg-secondary{% endif %}"
+      >
+        <i class="bi bi-building me-2"></i> Offices
+      </a>
+    </li>
+
+    <!-- Users -->
+    <li class="nav-item mb-2">
+      <a
+        href="{% url 'user_list' %}"
+        class="nav-link d-flex align-items-center rounded px-3 py-2 {% if request.resolver_match.url_name == 'user_list' or request.resolver_match.url_name == 'user_create' or request.resolver_match.url_name == 'user_edit' %}active bg-primary text-white{% else %}text-light hover-bg-secondary{% endif %}"
+      >
+        <i class="bi bi-people me-2"></i> Users
+      </a>
+    </li>
+
+    <!-- Assign Officers -->
+    <li class="nav-item mb-2">
+      <a
+        href="{% url 'assign_officers' %}"
+        class="nav-link d-flex align-items-center rounded px-3 py-2 {% if request.resolver_match.url_name == 'assign_officers' %}active bg-primary text-white{% else %}text-light hover-bg-secondary{% endif %}"
+      >
+        <i class="bi bi-diagram-3 me-2"></i> Assign Officers
+      </a>
+    </li>
+
+    <!-- Loan Policies -->
+    <li class="nav-item mb-2">
+      <a
+        href="{% url 'policy_list' %}"
+        class="nav-link d-flex align-items-center rounded px-3 py-2 {% if request.resolver_match.url_name == 'policy_list' or request.resolver_match.url_name == 'policy_create' %} active bg-primary text-white {% else %} text-light hover-bg-secondary {% endif %}"
+      >
+        <i class="bi bi-journal-text me-2"></i> Loan Policies
+      </a>
+    </li>
+
+    <!-- Reports -->
+    <li class="nav-item mb-2">
+      <a
+        href="{% url 'report_list' %}"
+        class="nav-link d-flex align-items-center rounded px-3 py-2 {% if request.resolver_match.url_name == 'report_list' %} active bg-primary text-white {% else %} text-light hover-bg-secondary {% endif %}"
+      >
+        <i class="bi bi-bar-chart-line me-2"></i> Reports
+      </a>
+    </li>
+
+    <!-- Members -->
+    <li class="nav-item mb-3">
+      <a
+        href="{% url 'member_list' %}"
+        class="nav-link d-flex align-items-center rounded px-3 py-2 {% if request.resolver_match.url_name == 'member_list' or request.resolver_match.url_name == 'member_create' or request.resolver_match.url_name == 'member_edit' %}active bg-primary text-white{% else %}text-light hover-bg-secondary{% endif %}"
+      >
+        <i class="bi bi-person-check me-2"></i> Members
+      </a>
+    </li>
+
+    <!-- Logout -->
     <li class="nav-item mt-auto">
       <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger w-100">
-          <i class="bi bi-box-arrow-right"></i> Logout
+        <button
+          type="submit"
+          class="btn btn-danger w-100 d-flex align-items-center justify-content-center"
+        >
+          <i class="bi bi-box-arrow-right me-2"></i> Logout
         </button>
       </form>
     </li>

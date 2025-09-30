@@ -1,5 +1,5 @@
 # lending/views/auth.py
-
+# lending/views/auth.py
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect
@@ -18,12 +18,19 @@ class CustomLoginView(LoginView):
 
     def get_success_url(self):
         user = self.request.user
-        if user.is_admin():
-            return "/dashboard/admin/"
-        elif user.is_manager():
-            return "/dashboard/manager/"
-        elif user.is_officer():
-            return "/dashboard/officer/"
+
+        # Redirect based on the role field
+        if hasattr(user, "role"):
+            role = user.role.upper()
+            if role == "ADMIN":
+                return "/dashboard/admin/"
+            elif role == "MANAGER":
+                return "/dashboard/manager/"
+            elif role == "OFFICER":
+                return "/dashboard/officer/"
+            else:
+                return "/dashboard/member/"
+        # fallback
         return "/dashboard/member/"
 
 class CustomLogoutView(LogoutView):
