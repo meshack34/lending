@@ -1,0 +1,66 @@
+{% extends "base_manager.html" %}
+{% block title %}Loans - {{ request.user.office.name }}{% endblock %}
+
+{% block manager_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="mb-0">💰 Loans</h3>
+  <form method="get" class="d-flex">
+    <select name="status" class="form-select me-2">
+      <option value="">All</option>
+      <option value="PENDING" {% if status == "PENDING" %}selected{% endif %}>Pending</option>
+      <option value="DISBURSED" {% if status == "DISBURSED" %}selected{% endif %}>Disbursed</option>
+      <option value="CLOSED" {% if status == "CLOSED" %}selected{% endif %}>Closed</option>
+    </select>
+    <button class="btn btn-outline-secondary">Filter</button>
+  </form>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Member</th>
+          <th>Officer</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Issued On</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for l in loans %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ l.member.user.get_full_name }}</td>
+          <td>{{ l.officer.get_full_name }}</td>
+          <td>{{ l.amount|floatformat:2 }}</td>
+          <td>
+            {% if l.status == "PENDING" %}
+              <span class="badge bg-warning">Pending</span>
+            {% elif l.status == "DISBURSED" %}
+              <span class="badge bg-success">Disbursed</span>
+            {% elif l.status == "CLOSED" %}
+              <span class="badge bg-secondary">Closed</span>
+            {% else %}
+              <span class="badge bg-danger">{{ l.status }}</span>
+            {% endif %}
+          </td>
+          <td>{{ l.created_at|date:"M d, Y" }}</td>
+          <td>
+            <a href="{% url 'manager_loan_detail' l.id %}" class="btn btn-sm btn-outline-primary">
+              View
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="text-center text-muted">No loans found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

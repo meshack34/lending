@@ -109,6 +109,10 @@ class LoanPolicy(models.Model):
     def __str__(self):
         return f"{self.name} ({self.company.name})"
 
+from decimal import Decimal  # <- add at the top of models.py
+from django.db import models
+from django.utils import timezone
+from .models import MemberProfile, User, LoanPolicy  # adjust imports as needed
 
 # -------------------------------
 # 6. Loans
@@ -141,7 +145,9 @@ class Loan(models.Model):
 
     def calculate_total_payable(self):
         """Flat rate: total = principal + (principal * rate * time/12)."""
-        interest = self.principal_amount * (self.interest_rate / 100) * (self.term_months / 12)
+        rate = Decimal(self.interest_rate) / Decimal('100')
+        term = Decimal(self.term_months) / Decimal('12')
+        interest = self.principal_amount * rate * term
         return self.principal_amount + interest
 
     def save(self, *args, **kwargs):
@@ -153,7 +159,6 @@ class Loan(models.Model):
 
     def __str__(self):
         return f"Loan {self.id} - {self.member.user.username} ({self.status})"
-
 
 # -------------------------------
 # 7. Repayments

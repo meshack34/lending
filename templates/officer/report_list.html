@@ -1,0 +1,32 @@
+{% extends "base_officer.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block officer_content %}
+<h2 class="mb-4">Reports</h2>
+
+<div class="row g-3">
+  <div class="col-md-2"><div class="card"><div class="card-body">Total Loans: {{ report.total_loans }}</div></div></div>
+  <div class="col-md-2"><div class="card"><div class="card-body">Active: {{ report.active_loans }}</div></div></div>
+  <div class="col-md-2"><div class="card"><div class="card-body">Closed: {{ report.closed_loans }}</div></div></div>
+  <div class="col-md-2"><div class="card"><div class="card-body">Pending: {{ report.pending_loans }}</div></div></div>
+  <div class="col-md-2"><div class="card"><div class="card-body">Overdue: {{ report.overdue_loans }}</div></div></div>
+  <div class="col-md-2"><div class="card"><div class="card-body">Repayments: {{ report.total_repayments }}</div></div></div>
+</div>
+
+<h4 class="mt-4">Previous Reports</h4>
+<table class="table table-sm">
+  <thead>
+    <tr><th>Date</th><th>Summary</th></tr>
+  </thead>
+  <tbody>
+    {% for r in previous_reports %}
+    <tr>
+      <td>{{ r.generated_at|date:"Y-m-d H:i" }}</td>
+      <td>{{ r.summary|truncatewords:15 }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="2" class="text-center">No reports yet</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

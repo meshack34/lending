@@ -1,0 +1,29 @@
+{% extends "base_officer.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block officer_content %}
+<h2 class="mb-4">Repayments</h2>
+
+<table class="table table-striped shadow-sm">
+  <thead>
+    <tr>
+      <th>Loan</th>
+      <th>Member</th>
+      <th>Amount</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in repayments %}
+    <tr>
+      <td>#{{ r.loan.id }}</td>
+      <td>{{ r.loan.member.user.get_full_name }}</td>
+      <td>{{ r.amount }}</td>
+      <td>{{ r.date|date:"Y-m-d" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4" class="text-center">No repayments yet</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,7 +1,10 @@
 # lending/urls.py
 from django.urls import path
-from .views import auth, dashboards, member
 from .views import admin as admin_views
+from .views import manager as manager_views
+from .views import auth, member, admin as admin_views, manager as manager_views, officer as officer_views
+
+
 
 urlpatterns = [
     # Public
@@ -14,9 +17,21 @@ urlpatterns = [
 
     # Dashboards
     path("dashboard/admin/", admin_views.admin_dashboard, name="admin_dashboard"),
-    path("dashboard/manager/", dashboards.manager_dashboard, name="manager_dashboard"),
-    path("dashboard/officer/", dashboards.officer_dashboard, name="officer_dashboard"),
     path("dashboard/member/", member.member_dashboard, name="member_dashboard"),
+    path("dashboard/manager/", manager_views.manager_dashboard, name="manager_dashboard"),
+    path("dashboard/officer/", officer_views.officer_dashboard, name="officer_dashboard"),
+
+
+    
+    # -------------------------------
+    # Officer URLs
+    # -------------------------------
+    path("officer/members/", officer_views.member_list, name="officer_member_list"),
+    path("officer/loans/", officer_views.loan_list, name="officer_loan_list"),
+    path("officer/loans/<int:loan_id>/", officer_views.loan_detail, name="officer_loan_detail"),
+    path("officer/repayments/", officer_views.repayment_list, name="officer_repayment_list"),
+    path("officer/reports/", officer_views.report_list, name="officer_report_list"),
+
 
     # Admin Features - Companies
     path("dashboard/admin/companies/", admin_views.company_list, name="company_list"),
@@ -57,4 +72,15 @@ urlpatterns = [
     path("member/loans/", member.loan_list, name="loan_list"),
     path("member/loans/<int:loan_id>/", member.loan_detail, name="loan_detail"),
     path("member/repayments/", member.repayment_history, name="repayment_history"),
+    path('member/loans/<int:pk>/edit/', member.loan_edit, name='loan_edit'),   # <-- make sure this exists
+    path('member/loans/<int:pk>/delete/', member.loan_delete, name='loan_delete'),
+
+    path("manager/dashboard/", manager_views.manager_dashboard, name="manager_dashboard"),
+    path("manager/officers/", manager_views.officer_list, name="manager_officer_list"),
+    path("manager/members/", manager_views.member_list, name="manager_member_list"),
+    path("manager/loans/", manager_views.loan_list, name="manager_loan_list"),
+    path("manager/loans/<int:loan_id>/", manager_views.loan_detail, name="manager_loan_detail"),
+    path("manager/repayments/", manager_views.repayment_list, name="manager_repayment_list"),
+    path("manager/reports/", manager_views.report_list, name="manager_report_list"),
+    path("manager/export/members/", manager_views.export_members_csv, name="manager_export_members_csv"),
 ]

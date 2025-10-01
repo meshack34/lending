@@ -1,0 +1,27 @@
+{% extends "base_officer.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block officer_content %}
+<h2>Loan Detail</h2>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <p><strong>Member:</strong> {{ loan.member.user.get_full_name }}</p>
+    <p><strong>Amount:</strong> {{ loan.principal_amount }}</p>
+    <p><strong>Term:</strong> {{ loan.term_months }} months</p>
+    <p><strong>Status:</strong> {{ loan.get_status_display }}</p>
+    <p><strong>Purpose:</strong> {{ loan.purpose }}</p>
+  </div>
+</div>
+
+{% if loan.status == "PENDING" %}
+<form method="post">{% csrf_token %}
+  <button name="action" value="approve" class="btn btn-success">Approve</button>
+  <button name="action" value="reject" class="btn btn-danger">Reject</button>
+</form>
+{% elif loan.status == "APPROVED" %}
+<form method="post">{% csrf_token %}
+  <button name="action" value="disburse" class="btn btn-primary">Disburse</button>
+</form>
+{% endif %}
+{% endblock %}

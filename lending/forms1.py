@@ -1,20 +1,22 @@
+# lending/forms.py
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model
-from .models import MemberProfile, Loan
-from .models import MemberProfile, Loan, LoanPolicy
+
+from .models import (
+    MemberProfile, Loan, LoanPolicy,
+    Company, Office, ManagerOfficerAssignment
+)
 
 User = get_user_model()
 
 
-# -------------------------------
-# Login Form
-# -------------------------------
-# forms.py
-
+# =========================================================
+# AUTH & LOGIN
+# =========================================================
 class CustomLoginForm(AuthenticationForm):
     """Custom login form styled with Bootstrap (email/phone + password)."""
-    username = forms.CharField( 
+    username = forms.CharField(
         label="Email or Phone",
         widget=forms.TextInput(attrs={
             "class": "form-control",
@@ -31,9 +33,9 @@ class CustomLoginForm(AuthenticationForm):
     )
 
 
-# -------------------------------
-# Member Registration
-# -------------------------------
+# =========================================================
+# MEMBER REGISTRATION & PROFILE
+# =========================================================
 class MemberRegistrationForm(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}), label="Password")
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}), label="Confirm Password")
@@ -49,7 +51,6 @@ class MemberRegistrationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["first_name", "middle_name", "last_name", "email"]
-
         widgets = {
             "first_name": forms.TextInput(attrs={"class": "form-control"}),
             "middle_name": forms.TextInput(attrs={"class": "form-control"}),
@@ -101,24 +102,16 @@ class MemberRegistrationForm(forms.ModelForm):
         return user
 
 
-
-
-# -------------------------------
-# Member Profile Update
-# -------------------------------
-
 class MemberProfileForm(forms.ModelForm):
+    """Allow members to update their profile except user + national_id."""
     class Meta:
         model = MemberProfile
         exclude = ["user", "national_id"]
 
-# -------------------------------
-# Loan Application
-# -------------------------------
-# forms.py
-from django import forms
-from .models import Loan, LoanPolicy
 
+# =========================================================
+# LOAN APPLICATION & POLICY
+# =========================================================
 class LoanApplicationForm(forms.ModelForm):
     class Meta:
         model = Loan
@@ -161,82 +154,47 @@ class LoanApplicationForm(forms.ModelForm):
         return cleaned_data
 
 
-# lending/forms.py
-from django import forms
-from .models import Company, Office
+class LoanPolicyForm(forms.ModelForm):
+    class Meta:
+        model = LoanPolicy
+        fields = ["company", "name", "interest_rate", "min_amount", "max_amount", "max_term_months"]
+        widgets = {
+            "company": forms.Select(attrs={"class": "form-select"}),
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "interest_rate": forms.NumberInput(attrs={"class": "form-control", "step": "0.01"}),
+            "min_amount": forms.NumberInput(attrs={"class": "form-control"}),
+            "max_amount": forms.NumberInput(attrs={"class": "form-control"}),
+            "max_term_months": forms.NumberInput(attrs={"class": "form-control"}),
+        }
 
-# Company Form
+
+# =========================================================
+# COMPANY & OFFICE
+# =========================================================
 class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
-        fields = ["name", "registration_number"]  # ✅ only existing fields
+        fields = ["name", "registration_number"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "registration_number": forms.TextInput(attrs={"class": "form-control"}),
         }
 
-# Office Form
+
 class OfficeForm(forms.ModelForm):
     class Meta:
         model = Office
-        fields = ["company", "name", "location"]  # ✅ matches model
+        fields = ["company", "name", "location"]
         widgets = {
             "company": forms.Select(attrs={"class": "form-select"}),
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "location": forms.TextInput(attrs={"class": "form-control"}),
         }
 
-from django import forms
-from django import forms
-from .models import User, Office
 
-# class AdminUserForm(forms.ModelForm):
-#     password1 = forms.CharField(
-#         label="Password",
-#         widget=forms.PasswordInput(attrs={"class": "form-control"}),
-#         required=False,
-#         help_text="Leave blank to keep current password (for edit)."
-#     )
-#     password2 = forms.CharField(
-#         label="Confirm Password",
-#         widget=forms.PasswordInput(attrs={"class": "form-control"}),
-#         required=False
-#     )
-
-#     class Meta:
-#         model = User
-#         fields = ["first_name", "middle_name", "last_name", "email", "role", "office"]
-#         widgets = {
-#             "first_name": forms.TextInput(attrs={"class": "form-control"}),
-#             "middle_name": forms.TextInput(attrs={"class": "form-control"}),
-#             "last_name": forms.TextInput(attrs={"class": "form-control"}),
-#             "email": forms.EmailInput(attrs={"class": "form-control"}),
-#             "role": forms.Select(attrs={"class": "form-select"}),
-#             "office": forms.Select(attrs={"class": "form-select"}),
-#         }
-
-#     def clean(self):
-#         cleaned_data = super().clean()
-#         password1 = cleaned_data.get("password1")
-#         password2 = cleaned_data.get("password2")
-
-#         if password1 or password2:
-#             if password1 != password2:
-#                 self.add_error("password2", "Passwords do not match.")
-#         return cleaned_data
-
-#     def save(self, commit=True):
-#         user = super().save(commit=False)
-#         password = self.cleaned_data.get("password1")
-#         if password:
-#             user.set_password(password)
-#         if commit:
-#             user.save()
-#         return user
-
-from django import forms
-from .models import User, Office
-
+# =========================================================
+# ADMIN: USER MANAGEMENT
+# =========================================================
 class AdminUserForm(forms.ModelForm):
     password1 = forms.CharField(
         label="Password",
@@ -264,11 +222,10 @@ class AdminUserForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        password1 = cleaned_data.get("password1")
-        password2 = cleaned_data.get("password2")
-
-        if password1 or password2:
-            if password1 != password2:
+        p1 = cleaned_data.get("password1")
+        p2 = cleaned_data.get("password2")
+        if p1 or p2:
+            if p1 != p2:
                 self.add_error("password2", "Passwords do not match.")
         return cleaned_data
 
@@ -277,24 +234,10 @@ class AdminUserForm(forms.ModelForm):
         password = self.cleaned_data.get("password1")
         if password:
             user.set_password(password)
-
-        # --- Ensure unique username ---
-        if not user.username:  # Only generate if empty
-            base_username = (user.first_name + user.last_name).lower()
-            username = base_username
-            counter = 1
-            while User.objects.filter(username=username).exists():
-                username = f"{base_username}{counter}"
-                counter += 1
-            user.username = username
-
         if commit:
             user.save()
         return user
 
-
-from django import forms
-from .models import User, ManagerOfficerAssignment
 
 class AdminAssignOfficersForm(forms.Form):
     manager = forms.ModelChoiceField(
@@ -309,34 +252,19 @@ class AdminAssignOfficersForm(forms.Form):
     )
 
     def save(self):
-        manager = self.cleaned_data['manager']
-        officers = self.cleaned_data['officers']
-        
-        # Remove previous assignments for this manager
+        manager = self.cleaned_data["manager"]
+        officers = self.cleaned_data["officers"]
+
+        # Remove old assignments
         ManagerOfficerAssignment.objects.filter(manager=manager).delete()
-        
-        # Create new assignments
+        # Add new
         for officer in officers:
             ManagerOfficerAssignment.objects.create(manager=manager, officer=officer)
 
-class LoanPolicyForm(forms.ModelForm):
-    class Meta:
-        model = LoanPolicy
-        fields = ["company", "name", "interest_rate", "min_amount", "max_amount", "max_term_months"]
-        widgets = {
-            "company": forms.Select(attrs={"class": "form-select"}),
-            "name": forms.TextInput(attrs={"class": "form-control"}),
-            "interest_rate": forms.NumberInput(attrs={"class": "form-control", "step": "0.01"}),
-            "min_amount": forms.NumberInput(attrs={"class": "form-control"}),
-            "max_amount": forms.NumberInput(attrs={"class": "form-control"}),
-            "max_term_months": forms.NumberInput(attrs={"class": "form-control"}),
-        }
 
-# lending/forms.py (append these classes)
-
-from django import forms
-from .models import User, Loan
-
+# =========================================================
+# REPORTING & SEARCH
+# =========================================================
 class ManagerReportForm(forms.Form):
     start_date = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
     end_date = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
@@ -350,5 +278,10 @@ class ManagerReportForm(forms.Form):
         choices=[("", "All statuses")] + list(Loan.STATUS_CHOICES)
     )
 
+
 class MemberSearchForm(forms.Form):
-    q = forms.CharField(required=False, label="Search", widget=forms.TextInput(attrs={"placeholder": "name, email, national id"}))
+    q = forms.CharField(
+        required=False,
+        label="Search",
+        widget=forms.TextInput(attrs={"placeholder": "name, email, national id", "class": "form-control"})
+    )

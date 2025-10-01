@@ -1,0 +1,41 @@
+{% extends "base_officer.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block officer_content %}
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row g-3">
+  <div class="col-md-3">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h6>Total Loans</h6>
+        <h3>{{ stats.my_loans_total }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm border-0 bg-warning text-dark">
+      <div class="card-body text-center">
+        <h6>Pending</h6>
+        <h3>{{ stats.my_loans_pending }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm border-0 bg-success text-white">
+      <div class="card-body text-center">
+        <h6>Disbursed</h6>
+        <h3>{{ stats.my_loans_disbursed }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm border-0 bg-info text-white">
+      <div class="card-body text-center">
+        <h6>Total Repayments</h6>
+        <h3>{{ stats.repayments_total }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

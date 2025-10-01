@@ -1,0 +1,45 @@
+{% extends "base_manager.html" %}
+{% block title %}Loan Details{% endblock %}
+
+{% block manager_content %}
+<h3 class="mb-4">💳 Loan #{{ loan.id }} Details</h3>
+
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <p><strong>Member:</strong> {{ loan.member.user.get_full_name }}</p>
+    <p><strong>Officer:</strong> {{ loan.officer.get_full_name }}</p>
+    <p><strong>Amount:</strong> {{ loan.amount|floatformat:2 }}</p>
+    <p><strong>Status:</strong> {{ loan.status }}</p>
+    <p><strong>Balance:</strong> {{ loan.balance|floatformat:2 }}</p>
+    <p><strong>Date Issued:</strong> {{ loan.created_at|date:"M d, Y" }}</p>
+  </div>
+</div>
+
+<h4>💵 Repayments</h4>
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <table class="table table-striped align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Amount</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in repayments %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ r.amount|floatformat:2 }}</td>
+          <td>{{ r.date|date:"M d, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3" class="text-center text-muted">No repayments found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

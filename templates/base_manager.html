@@ -1,0 +1,10 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<div class="d-flex">
+  {% include "partials/_sidenav_manager.html" %}
+
+  <!-- Main content -->
+  <main class="flex-grow-1 p-4 overflow-auto" style="min-height: 100vh">
+    {% block manager_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

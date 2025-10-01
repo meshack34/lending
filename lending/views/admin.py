@@ -1,11 +1,19 @@
 # lending/views/admin.py
+
+import csv
+import datetime
+
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from ..forms import CompanyForm, OfficeForm, AdminUserForm
-from .mixins import admin_required
-from ..models import Company, Office, User, Loan
-from ..models import MemberProfile
+from django.db.models import Q
+
+from ..decorators import admin_required
+from ..forms import ( CompanyForm,OfficeForm, AdminUserForm,AdminAssignOfficersForm,LoanPolicyForm,
+)
+from ..models import (Company,Office,User,Loan,MemberProfile,ManagerOfficerAssignment,LoanPolicy,ReportLog,
+)
 
 
 @login_required
@@ -106,16 +114,6 @@ def office_delete(request, office_id):
     return redirect("office_list")
 
 
-# lending/views/admin.py
-from ..forms import CompanyForm, OfficeForm
-from ..models import Company, Office, User, Loan, LoanPolicy, ReportLog
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from ..models import LoanPolicy
-from django import forms
-from ..decorators import admin_required
-from ..forms import LoanPolicyForm
 
 
 # Loan Policies
@@ -150,8 +148,6 @@ def report_list(request):
     return render(request, "admin/report_list.html", {"reports": reports})
 
 
-# lending/views/admin.py
-from django.db.models import Q
 
 
 
@@ -227,11 +223,7 @@ def user_delete(request, user_id):
     messages.success(request, "✅ User deleted successfully.")
     return redirect("user_list")
 
-# lending/views/admin.py
 
-from ..forms import AdminAssignOfficersForm
-from ..models import ManagerOfficerAssignment
-from django.contrib import messages
 
 @login_required
 @admin_required
@@ -259,11 +251,6 @@ def assign_officers_to_manager(request):
 # Member Management
 # -------------------------------
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from ..decorators import admin_required
-from ..models import MemberProfile
 
 # -------------------------------
 # Create Member
@@ -326,14 +313,7 @@ def member_suspend(request, member_id):
     messages.success(request, f"✅ Member {status} successfully.")
     return redirect("member_list")
 
-from django.shortcuts import render, get_object_or_404
-from django.db.models import Q
-from django.http import HttpResponse
-import csv, datetime
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from ..decorators import admin_required
-from ..models import MemberProfile
+
 
 
 # -------------------------------

@@ -1,0 +1,45 @@
+{% extends "base_manager.html" %}
+{% block title %}Office Reports{% endblock %}
+
+{% block manager_content %}
+<h3 class="mb-4">📑 Office Reports</h3>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0 p-3 h-100">
+      <h6>Total Loans</h6>
+      <h4 class="fw-bold">{{ reports.total_loans }}</h4>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0 p-3 h-100">
+      <h6>Active Loans</h6>
+      <h4 class="fw-bold text-success">{{ reports.active_loans }}</h4>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0 p-3 h-100">
+      <h6>Closed Loans</h6>
+      <h4 class="fw-bold text-secondary">{{ reports.closed_loans }}</h4>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0 p-3 h-100">
+      <h6>Pending Loans</h6>
+      <h4 class="fw-bold text-warning">{{ reports.pending_loans }}</h4>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0 p-3 h-100">
+      <h6>Overdue Loans</h6>
+      <h4 class="fw-bold text-danger">{{ reports.overdue_loans }}</h4>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0 p-3 h-100">
+      <h6>Total Repayments</h6>
+      <h4 class="fw-bold">{{ reports.total_repayments|floatformat:2 }}</h4>
+    </div>
+  </div>
+</div>
+{% endblock %}

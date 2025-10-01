@@ -1,11 +1,18 @@
-{% extends "base_admin.html" %}
-{% block content %}
+{% extends "base_admin.html" %} {% load static %} {% block admin_content %}
 <div class="container-fluid py-4">
   <h2 class="mb-3">Members</h2>
-  <a href="{% url 'member_create' %}" class="btn btn-primary mb-3">+ Add Member</a>
-  
+  <a href="{% url 'member_create' %}" class="btn btn-primary mb-3"
+    >+ Add Member</a
+  >
+
   <form method="get" class="mb-3 d-flex gap-2">
-    <input type="text" name="q" class="form-control" placeholder="Search by name, email, ID" value="{{ search_query }}">
+    <input
+      type="text"
+      name="q"
+      class="form-control"
+      placeholder="Search by name, email, ID"
+      value="{{ search_query }}"
+    />
     <button type="submit" class="btn btn-secondary">Search</button>
   </form>
 
@@ -29,17 +36,25 @@
         <td>{{ member.user.email }}</td>
         <td>{{ member.phone_number }}</td>
         <td>{{ member.national_id }}</td>
+
         <td>
-          {% if member.is_active %}
-            <span class="badge bg-success">Active</span>
+          {% if member.user.is_active %}
+          <span class="badge bg-success">Active</span>
           {% else %}
-            <span class="badge bg-warning">Suspended</span>
+          <span class="badge bg-warning">Suspended</span>
           {% endif %}
         </td>
         <td>
-          <a href="{% url 'member_edit' member.id %}" class="btn btn-sm btn-warning">Edit</a>
-          <a href="{% url 'member_suspend' member.id %}" class="btn btn-sm btn-secondary">
-            {% if member.is_active %}Suspend{% else %}Activate{% endif %}
+          <a
+            href="{% url 'member_edit' member.id %}"
+            class="btn btn-sm btn-warning"
+            >Edit</a
+          >
+          <a
+            href="{% url 'member_suspend' member.id %}"
+            class="btn btn-sm btn-secondary"
+          >
+            {% if member.user.is_active %}Suspend{% else %}Activate{% endif %}
           </a>
         </td>
       </tr>
